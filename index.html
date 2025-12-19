@@ -9,23 +9,13 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #0f172a; color: #e5e7eb; }
-    header { background: #020617; padding: 1rem; text-align: center; }
-    header h1 { margin: 0 0 0.5rem 0; }
-    select { padding: 0.5rem; font-size: 1rem; margin-top: 0.5rem; }
-    #map-container { position: relative; max-width: 1100px; margin: 1rem auto; border: 2px solid #334155; background: #020617; }
-    #school-map { width: 100%; max-width: 900px; height: auto; display: block; margin: 0 auto; border: 2px solid #333; user-select: none; }
-    .pin { position: absolute; transform: translate(-50%, -100%); background: #ef4444; color: #fff; padding: 4px 6px; border-radius: 6px; font-size: 0.75rem; white-space: nowrap; pointer-events: none; }
-    footer { text-align: center; font-size: 0.8rem; color: #94a3b8; padding: 1rem; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header>
   <h1>Teacher Locator</h1>
-  <p>Select a teacher, then tap their current location on the map.</p>
+  <p>Select a teacher, then tap their location on the map.</p>
   <select id="teacherSelect">
     <option value="">-- Select a Teacher --</option>
     <option>Mr. Smith</option>
@@ -58,6 +48,7 @@
 
   const mapContainer = document.getElementById('map-container');
   const teacherSelect = document.getElementById('teacherSelect');
+  const img = document.getElementById('school-map');
 
   // Tap to place/update a teacher pin (mobile-friendly)
   mapContainer.addEventListener('click', (e) => {
@@ -67,15 +58,14 @@
       return;
     }
 
-    const rect = mapContainer.getBoundingClientRect();
-    // Store coordinates as percentages
+    const rect = img.getBoundingClientRect();
     const xPercent = (e.clientX - rect.left) / rect.width;
     const yPercent = (e.clientY - rect.top) / rect.height;
 
     db.collection('teachers').doc(teacher).set({ xPercent, yPercent });
   });
 
-  // Live updates: redraw pins using percentages
+  // Live updates: redraw pins using percentages and image size
   db.collection('teachers').onSnapshot(snapshot => {
     document.querySelectorAll('.pin').forEach(p => p.remove());
 
@@ -86,8 +76,9 @@
       const pin = document.createElement('div');
       pin.className = 'pin';
       pin.textContent = doc.id;
-      pin.style.left = data.xPercent * mapContainer.clientWidth + 'px';
-      pin.style.top = data.yPercent * mapContainer.clientHeight + 'px';
+
+      pin.style.left = data.xPercent * img.clientWidth + 'px';
+      pin.style.top = data.yPercent * img.clientHeight + 'px';
       mapContainer.appendChild(pin);
     });
   });
