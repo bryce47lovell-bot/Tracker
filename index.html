@@ -11,28 +11,71 @@
 
   <link rel="stylesheet" href="style.css">
   <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      text-align: center;
+      margin: 20px;
+    }
+
     #map-container {
       position: relative;
-      display: inline-block;
+      width: 90%;
+      max-width: 1200px;
     }
+
     #school-map {
-      max-width: 100%;
+      width: 100%;
       height: auto;
+      display: block;
     }
+
     .pin {
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       background-color: red;
       border-radius: 50%;
       transform: translate(-50%, -50%);
+      pointer-events: none;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 10px;
+      font-size: 12px;
       font-weight: bold;
-      pointer-events: none; /* so clicks go through */
+    }
+
+    .pin::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: yellow;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    footer {
+      margin: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    select {
+      padding: 5px;
+      font-size: 1em;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -40,7 +83,7 @@
 
 <header>
   <h1>Teacher Locator</h1>
-  <p>Select a teacher, then tap their location on the map.</p>
+  <p>Select a teacher, then tap/click their location on the map.</p>
   <select id="teacherSelect">
     <option value="">-- Select a Teacher --</option>
     <option>Mr. Smith</option>
@@ -58,6 +101,7 @@
 </footer>
 
 <script>
+  // 🔴 REPLACE THESE WITH YOUR REAL VALUES FROM FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyCNqyxvqgGmfgLpdIvDohSlVlx-7v1ZI5g",
     authDomain: "santa-tracker-549fd.firebaseapp.com",
@@ -74,7 +118,7 @@
   const teacherSelect = document.getElementById('teacherSelect');
   const img = document.getElementById('school-map');
 
-  // Tap to place/update a teacher pin (mobile-friendly)
+  // Click/tap to place/update a teacher pin
   mapContainer.addEventListener('click', (e) => {
     const teacher = teacherSelect.value;
     if (!teacher) {
@@ -89,7 +133,7 @@
     db.collection('teachers').doc(teacher).set({ xPercent, yPercent });
   });
 
-  // Live updates: redraw pins using percentages and image size
+  // Live updates: redraw pins
   db.collection('teachers').onSnapshot(snapshot => {
     document.querySelectorAll('.pin').forEach(p => p.remove());
 
@@ -99,10 +143,10 @@
 
       const pin = document.createElement('div');
       pin.className = 'pin';
-      pin.textContent = doc.id;
+      pin.textContent = doc.id.charAt(0); // first letter of teacher name
 
-      pin.style.left = data.xPercent * img.clientWidth + 'px';
-      pin.style.top = data.yPercent * img.clientHeight + 'px';
+      pin.style.left = (data.xPercent * img.clientWidth) + 'px';
+      pin.style.top = (data.yPercent * img.clientHeight) + 'px';
       mapContainer.appendChild(pin);
     });
   });
