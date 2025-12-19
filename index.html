@@ -10,74 +10,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    header {
-      text-align: center;
-      margin: 20px;
-    }
-
-    #map-container {
-      position: relative;
-      width: 90%;
-      max-width: 1200px;
-    }
-
-    #school-map {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .pin {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      background-color: red;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .pin::after {
-      content: '';
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: yellow;
-      border-radius: 50%;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    footer {
-      margin: 20px;
-      text-align: center;
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    select {
-      padding: 5px;
-      font-size: 1em;
-      margin-top: 10px;
-    }
-  </style>
 </head>
 <body>
 
@@ -101,7 +33,7 @@
 </footer>
 
 <script>
-  // 🔴 REPLACE THESE WITH YOUR REAL VALUES FROM FIREBASE
+  // 🔴 REPLACE WITH YOUR REAL FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyCNqyxvqgGmfgLpdIvDohSlVlx-7v1ZI5g",
     authDomain: "santa-tracker-549fd.firebaseapp.com",
@@ -118,7 +50,7 @@
   const teacherSelect = document.getElementById('teacherSelect');
   const img = document.getElementById('school-map');
 
-  // Click/tap to place/update a teacher pin
+  // Tap/click to place/update a teacher pin
   mapContainer.addEventListener('click', (e) => {
     const teacher = teacherSelect.value;
     if (!teacher) {
@@ -133,8 +65,9 @@
     db.collection('teachers').doc(teacher).set({ xPercent, yPercent });
   });
 
-  // Live updates: redraw pins
+  // Live updates: redraw pins using percentages
   db.collection('teachers').onSnapshot(snapshot => {
+    // remove old pins
     document.querySelectorAll('.pin').forEach(p => p.remove());
 
     snapshot.forEach(doc => {
@@ -143,10 +76,10 @@
 
       const pin = document.createElement('div');
       pin.className = 'pin';
-      pin.textContent = doc.id.charAt(0); // first letter of teacher name
+      pin.textContent = doc.id;
 
-      pin.style.left = (data.xPercent * img.clientWidth) + 'px';
-      pin.style.top = (data.yPercent * img.clientHeight) + 'px';
+      pin.style.left = data.xPercent * img.clientWidth + 'px';
+      pin.style.top = data.yPercent * img.clientHeight + 'px';
       mapContainer.appendChild(pin);
     });
   });
