@@ -1,0 +1,79 @@
+/* Basic reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Page layout */
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #2b2d42;
+  color: #edf2f4;
+  padding: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+header p {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+#teacherSelect {
+  padding: 8px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Map container */
+#map-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+#school-map {
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #2b2d42;
+  border-radius: 10px;
+}
+
+/* Pins */
+.pin {
+  position: absolute;
+  background-color: #e63946;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Footer */
+footer {
+  background-color: #2b2d42;
+  color: #edf2f4;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 0.8rem;
+}
