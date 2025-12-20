@@ -78,12 +78,15 @@
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (!data.xPercent || !data.yPercent) return;
+      if (data.xPercent == null || data.yPercent == null) return;
 
       const pin = document.createElement("div");
       pin.className = "pin";
-      pin.textContent = doc.id;
+      const label = document.createElement("div");
+label.className = "pin-label";
+label.textContent = doc.id;
 
+pin.appendChild(label);
       pin.style.left = (data.xPercent * img.clientWidth) + "px";
       pin.style.top = (data.yPercent * img.clientHeight) + "px";
 
