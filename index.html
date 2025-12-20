@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teacher Locator</title>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase (compat version works with GitHub Pages) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -15,25 +15,26 @@
 
 <header>
   <h1>Teacher Locator</h1>
-  <p>Select a teacher, then tap/click their location on the map.</p>
+  <p>Select a teacher, then tap their location.</p>
+
   <select id="teacherSelect">
     <option value="">-- Select a Teacher --</option>
-    <option>Mr. Smith</option>
-    <option>Ms. Johnson</option>
-    <option>Coach Brown</option>
+    <option value="Mr. Smith">Mr. Smith</option>
+    <option value="Ms. Johnson">Ms. Johnson</option>
+    <option value="Coach Brown">Coach Brown</option>
   </select>
 </header>
 
 <div id="map-container">
-  <img id="school-map" src="school-map.png" alt="School Map" />
+  <img id="school-map" src="school-map.png" alt="School Map">
 </div>
 
 <footer>
-  Live updates • One pin per teacher • No user data stored
+  Live updates • One pin per teacher
 </footer>
 
 <script>
-  // 🔴 REPLACE WITH YOUR REAL FIREBASE CONFIG
+  // 🔥 Your Firebase config (already correct)
   const firebaseConfig = {
     apiKey: "AIzaSyCNqyxvqgGmfgLpdIvDohSlVlx-7v1ZI5g",
     authDomain: "santa-tracker-549fd.firebaseapp.com",
@@ -46,40 +47,46 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  const mapContainer = document.getElementById('map-container');
-  const teacherSelect = document.getElementById('teacherSelect');
-  const img = document.getElementById('school-map');
+  const img = document.getElementById("school-map");
+  const mapContainer = document.getElementById("map-container");
+  const teacherSelect = document.getElementById("teacherSelect");
 
-  // Tap/click to place/update a teacher pin
-  mapContainer.addEventListener('click', (e) => {
+  // ✅ CLICK DIRECTLY ON IMAGE (fixes offset forever)
+  img.addEventListener("click", (e) => {
     const teacher = teacherSelect.value;
     if (!teacher) {
-      alert('Select a teacher first');
+      alert("Select a teacher first");
       return;
     }
 
     const rect = img.getBoundingClientRect();
-    const xPercent = (e.clientX - rect.left) / rect.width;
-    const yPercent = (e.clientY - rect.top) / rect.height;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    db.collection('teachers').doc(teacher).set({ xPercent, yPercent });
+    const xPercent = x / rect.width;
+    const yPercent = y / rect.height;
+
+    db.collection("teachers").doc(teacher).set({
+      xPercent,
+      yPercent
+    });
   });
 
-  // Live updates: redraw pins using percentages
-  db.collection('teachers').onSnapshot(snapshot => {
-    // remove old pins
-    document.querySelectorAll('.pin').forEach(p => p.remove());
+  // ✅ LIVE UPDATES
+  db.collection("teachers").onSnapshot(snapshot => {
+    document.querySelectorAll(".pin").forEach(p => p.remove());
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.xPercent == null || data.yPercent == null) return;
+      if (!data.xPercent || !data.yPercent) return;
 
-      const pin = document.createElement('div');
-      pin.className = 'pin';
+      const pin = document.createElement("div");
+      pin.className = "pin";
       pin.textContent = doc.id;
 
-      pin.style.left = data.xPercent * img.clientWidth + 'px';
-      pin.style.top = data.yPercent * img.clientHeight + 'px';
+      pin.style.left = (data.xPercent * img.clientWidth) + "px";
+      pin.style.top = (data.yPercent * img.clientHeight) + "px";
+
       mapContainer.appendChild(pin);
     });
   });
