@@ -1,27 +1,23 @@
-/* General page styling */
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   margin: 0;
-  padding: 0;
+  background: #f4f6f8;
+  text-align: center;
 }
 
 header {
-  padding: 20px;
-  background-color: #0073e6;
-  color: white;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-header h1 {
+h1 {
   margin: 0;
 }
 
-header p {
-  margin: 5px 0 15px 0;
-}
-
-#teacherSelect {
-  padding: 5px;
+select {
+  margin-top: 10px;
+  padding: 8px;
   font-size: 16px;
 }
 
@@ -37,26 +33,38 @@ header p {
   display: block;
 }
 
-/* Pin styling */
+/* 🔴 REAL MAP PIN */
 .pin {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  background-color: red;
-  border-radius: 50%;
-  transform: translate(-50%, -50%); /* centers pin exactly on click */
+  width: 42px;
+  height: 42px;
+  background: #e53935;
+  border-radius: 50% 50% 50% 0;
+  transform: translate(-50%, -100%) rotate(-45deg);
+  pointer-events: none;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  pointer-events: none; /* allows clicking through pins */
+}
+
+/* Inner circle for text */
+.pin::after {
+  content: attr(data-name);
+  width: 26px;
+  height: 26px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  transform: rotate(45deg);
 }
 
 footer {
-  padding: 10px;
+  margin: 20px;
   font-size: 14px;
   color: #555;
-  background-color: #f2f2f2;
 }
